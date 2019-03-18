@@ -1,0 +1,35 @@
+package com.laowang.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+/**
+ * @author wangyonghao
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class DownloadResult<T> implements Serializable{
+
+    private static final long serialVersionUID = 6624812054047777574L;
+
+    /**返回信息说明*/
+    private String msg;
+    /**返回状态码*/
+    private StatusCode code;
+    /**返回数据*/
+    private T data;
+
+
+    public enum StatusCode{
+        /**成功*/
+        SUCCESS,
+        /**失败*/
+        FAIL,
+        /**再次请求*/
+        AGAIN
+    }
+}
