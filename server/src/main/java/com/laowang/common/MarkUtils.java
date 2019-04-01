@@ -198,13 +198,21 @@ public class MarkUtils {
 //        System.out.println(checkDBSource(source));
 //        unGzipFile("D:\\export\\mysql\\article.13.csv.gzip","D:\\export\\mysql\\article.csv");
 
-        File file = new File("D:\\export\\user.csv");
-        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file));
-        for (int i = 2; i < 5000000; i++) {
-            outputStreamWriter.write(i+",\"643710049@qq.com\",\"Wed Jun 13 13:06:44 CST 2018\",\"123\",\"laowang\",\"this is a test\"\n");
-        }
-        outputStreamWriter.flush();
-        outputStreamWriter.close();
+//        File file = new File("D:\\export\\user.csv");
+//        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file));
+//        for (int i = 2; i < 5000000; i++) {
+//            outputStreamWriter.write(i+",\"643710049@qq.com\",\"Wed Jun 13 13:06:44 CST 2018\",\"123\",\"laowang\",\"this is a test\"\n");
+//        }
+//        outputStreamWriter.flush();
+//        outputStreamWriter.close();
+
+
+        DBSource source = new DBSource();
+        source.setDriverName("oracle.jdbc.driver.OracleDriver");
+        source.setUsername("c##wyh");
+        source.setPassword("wyh000000");
+        source.setUrl("jdbc:oracle:thin:@127.0.0.1:1521:orcl");
+        checkDBSource(source);
     }
 
 

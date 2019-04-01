@@ -120,7 +120,7 @@ public class TableService {
 
 
     /**
-     * 功能： 获取表前10行数据
+     * 功能： 获取表前5行数据
      *
      * @param tableName
      * @return
@@ -131,7 +131,7 @@ public class TableService {
         switch (globalVar.getDBType()){
             case "mysql": sql = "SELECT * FROM " + tableName + " LIMIT 5;";break;
             case "sqlserver":sql = "SELECT TOP 5 * FROM "+tableName+" ;";break;
-            case "oracle":sql = "SELECT * FROM "+ tableName +"  WHERE ROWNUM <= 5;";break;
+            case "oracle":sql = "SELECT * FROM "+ tableName +"  WHERE ROWNUM <= 5";break;
             default:
         }
         log.info("获取前世行表数据,sql: {}", sql);
@@ -171,6 +171,12 @@ public class TableService {
             while (rowSet.next()){
                 result.add(rowSet.getString("name"));
             }
+        }else if ("oracle".equals(globalVar.getDBType())){
+            String sql = " select COLUMN_NAME from user_tab_cols where table_name='"+tableName.toUpperCase()+"'";
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
+            while (rowSet.next()){
+                result.add(rowSet.getString("COLUMN_NAME"));
+            }
         }
         return result;
     }
@@ -183,12 +189,22 @@ public class TableService {
      */
     public List getTables() {
 
-        return jdbcTemplate.query("select table_name, table_schema from information_schema.tables where  TABLE_TYPE = 'BASE TABLE'", new RowMapper<Map>() {
+        String sql = null;
+        if (globalVar.getDBType().equals("oracle")){
+            sql = "select table_name from user_tables";
+        }else{
+            sql = "select table_name, table_schema from information_schema.tables where  TABLE_TYPE = 'BASE TABLE';";
+        }
+        return jdbcTemplate.query(sql, new RowMapper<Map>() {
 
             @Override
             public Map mapRow(ResultSet resultSet, int i) throws SQLException {
                 Map row = new HashMap();
-                row.put(resultSet.getString("table_schema"), resultSet.getString("table_name"));
+                if ("oracle".equals(globalVar.getDBType())){
+                    row.put(resultSet.getString("table_name"), resultSet.getString("table_name"));
+                }else {
+                    row.put(resultSet.getString("table_schema"), resultSet.getString("table_name"));
+                }
                 return row;
             }
         });

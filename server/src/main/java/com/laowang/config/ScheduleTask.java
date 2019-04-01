@@ -53,6 +53,7 @@ public class ScheduleTask implements CommandLineRunner {
                     continue;
                 }
                 String filePath = globalVar.getStoreDir() + table.getTableName()+ "."+table.getTotalColumn()+".csv";
+                String file = table.getTableName()+"."+table.getTotalColumn()+".csv";
                 switch (globalVar.getDBType()){
                     case "mysql" : sql = "SELECT * INTO OUTFILE '" + filePath +
                             "' FIELDS TERMINATED BY ',' " +
@@ -62,6 +63,8 @@ public class ScheduleTask implements CommandLineRunner {
                     case "sqlserver":sql = "EXEC [master]..xp_cmdshell 'BCP duplication.dbo."+
                             table.getTableName()+ " out "+
                             filePath + " -c -t\",\" -r\"\\n\" -T'";break;
+                    case "oracle": sql = " call sql_to_csv('select * from "+table.getTableName()+"','OUT_PATH','"+file+"')";
+                    default:
                 }
                 jdbcTemplate.execute(sql);
                 //将导出的数据文件压缩，并把记录缓存到本地
@@ -94,14 +97,19 @@ public class ScheduleTask implements CommandLineRunner {
 
                 //根据数据库类型查询所有行，TODO 这里应该只统计同步表的行
                 switch (globalVar.getDBType()){
+                    case "oracle":
                     case "sqlserver":
                     case "mysql" : sql = "SELECT count(*) " +
-                            "FROM "+table.getTableName();break;
+                            "FROM "+table.getTableName().toUpperCase();break;
+                    default:
                 }
                 List<Object> total = jdbcTemplate.query(sql,  new RowMapper<Object>() {
 
                     @Override
                     public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+                        if ("oracle".equals(globalVar.getDBType())){
+                            return resultSet.getInt("count(*)");
+                        }
                         return resultSet.getInt(1);
                     }
                 });

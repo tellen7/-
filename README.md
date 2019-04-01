@@ -42,3 +42,4 @@ springboot + druid + maven + thymeleaf + bootstrap + JWT
 
 1. 支持oracle数据库
 2. 整理解决问题与技术文档 
+3. 系统数据序列化存储

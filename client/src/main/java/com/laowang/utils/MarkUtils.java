@@ -137,7 +137,7 @@ public class MarkUtils {
                 sql.append(temp.get(i) + " varchar(255),\n");
             }
         }
-        sql.append(");");
+        sql.append(")");
         return  sql.toString();
     }
 
